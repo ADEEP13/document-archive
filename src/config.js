@@ -5,8 +5,8 @@
 export const DOCUMENT_CONFIG = {
   title: "Public Document Archive",
   description: "Searchable public release. Browse, search and share any page.",
-  totalPages: 2000, // Verified against the PDF at load time; a mismatch is only logged.
-  fileSize: "160 MB",
+  totalPages: 2103, // Verified against the PDF at load time; a mismatch is only logged.
+  fileSize: "160.5 MB",
   source: "Source information goes here (agency, release name, URL).",
   publicationDate: "2026-01-01",
 
