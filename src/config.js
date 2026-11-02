@@ -13,10 +13,10 @@ export const DOCUMENT_CONFIG = {
   // URL PDF.js loads from. It MUST send CORS headers and support Range requests.
   // GitHub Release URLs usually do not send CORS headers, so the recommended value is
   // the free Cloudflare Worker proxy in /workers (see README, step 7).
-  pdfUrl: "https://pdf-proxy.YOUR-SUBDOMAIN.workers.dev/document.pdf",
+  pdfUrl: "https://rough-heart-a313.adeepag13.workers.dev/document.pdf",
 
   // Plain link shown on the "Download Original PDF" button (no CORS needed).
-  downloadUrl: "https://github.com/OWNER/REPO/releases/download/v1/document.pdf",
+  downloadUrl: "https://github.com/ADEEP13/document-archive/releases/download/V1/document.pdf",
 
   // Folder produced by scripts/extract_pdf_text.py, relative to index.html.
   searchIndexPath: "public/search-index/",
