@@ -1,0 +1,7 @@
+name = "pdf-proxy"
+main = "pdf-proxy.js"
+compatibility_date = "2024-11-01"
+
+[vars]
+PDF_URL = "https://github.com/OWNER/REPO/releases/download/v1/document.pdf"
+ALLOWED_ORIGINS = "https://addon.indevs.in"

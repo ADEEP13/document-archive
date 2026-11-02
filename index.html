@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Public Document Archive</title>
+  <meta name="description" content="Searchable public document archive.">
+  <link rel="icon" href="public/assets/icons/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="src/styles.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" defer></script>
+  <script type="module" src="src/app.js"></script>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l5 5"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.01"/></symbol>
+    <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 11l5 5 5-5M5 20h14"/></symbol>
+    <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+    <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M5 12h14M12 5v14"/></symbol>
+    <symbol id="i-fit" viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  </defs>
+</svg>
+
+<header class="site-header">
+  <button class="icon-btn" id="btn-sidebar" type="button" aria-label="Toggle page thumbnails" aria-controls="sidebar" aria-expanded="false">
+    <svg class="i"><use href="#i-menu"/></svg>
+  </button>
+  <div class="brand">
+    <h1 id="doc-title">Public Document Archive</h1>
+    <p id="doc-desc"></p>
+  </div>
+  <form class="search" id="search-form" role="search" aria-label="Search the whole document">
+    <label for="search-input" class="sr-only">Search all pages</label>
+    <input id="search-input" type="search" name="q" placeholder="Search all pages" autocomplete="off" enterkeyhint="search" spellcheck="false">
+    <button class="btn btn-search" type="submit"><svg class="i"><use href="#i-search"/></svg><span>Search</span></button>
+  </form>
+  <button class="btn" id="btn-info" type="button"><svg class="i"><use href="#i-info"/></svg><span>About</span></button>
+  <a class="btn btn-primary" id="btn-download" href="#" rel="noopener"><svg class="i"><use href="#i-download"/></svg><span>Download Original PDF</span></a>
+</header>
+
+<div class="workspace">
+  <aside class="panel" id="sidebar" aria-label="Page thumbnails">
+    <div class="panel-head"><h2>Pages</h2></div>
+    <div class="thumbs" id="thumbs" tabindex="-1"></div>
+  </aside>
+
+  <main id="viewer" aria-label="Document viewer">
+    <div id="scroller" tabindex="0" aria-label="Document pages">
+      <div id="spacer"></div>
+    </div>
+    <div class="overlay" id="loading" role="status">
+      <div>
+        <p class="overlay-title" id="loading-text">Opening document…</p>
+        <progress id="loading-bar" max="100"></progress>
+        <p class="muted" id="loading-detail">Only the pages you view are downloaded.</p>
+      </div>
+    </div>
+    <div class="overlay" id="error" role="alert" hidden>
+      <div class="error-box">
+        <p class="overlay-title" id="error-title">The document could not be loaded</p>
+        <p id="error-text"></p>
+        <p>
+          <button class="btn btn-primary" id="error-retry" type="button">Try again</button>
+          <a class="btn" id="error-download" href="#" rel="noopener">Download the PDF instead</a>
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <aside class="panel" id="results" aria-label="Search results">
+    <div class="panel-head">
+      <h2>Search results</h2>
+      <button class="icon-btn" id="results-close" type="button" aria-label="Close search results"><svg class="i"><use href="#i-close"/></svg></button>
+    </div>
+    <p class="results-status" id="results-status" role="status" aria-live="polite"></p>
+    <ol class="results-list" id="results-list"></ol>
+  </aside>
+</div>
+
+<footer class="toolbar" aria-label="Page controls">
+  <div class="group">
+    <button class="icon-btn" id="btn-prev" type="button" aria-label="Previous page"><svg class="i"><use href="#i-left"/></svg></button>
+    <label class="page-jump">Page
+      <input id="page-input" type="text" inputmode="numeric" pattern="[0-9]*" size="5" aria-label="Page number" autocomplete="off">
+      <span>of <b id="page-total">–</b></span>
+    </label>
+    <button class="icon-btn" id="btn-next" type="button" aria-label="Next page"><svg class="i"><use href="#i-right"/></svg></button>
+  </div>
+  <div class="group" role="group" aria-label="Zoom">
+    <button class="icon-btn" id="zoom-out" type="button" aria-label="Zoom out"><svg class="i"><use href="#i-minus"/></svg></button>
+    <output id="zoom-label" class="zoom-label" aria-live="off">100%</output>
+    <button class="icon-btn" id="zoom-in" type="button" aria-label="Zoom in"><svg class="i"><use href="#i-plus"/></svg></button>
+    <button class="btn btn-small" id="zoom-reset" type="button" title="Reset to 100%">100%</button>
+    <button class="icon-btn" id="zoom-fit" type="button" aria-label="Fit page to width" title="Fit to width"><svg class="i"><use href="#i-fit"/></svg></button>
+  </div>
+  <div class="group find">
+    <label for="find-input">Find on this page</label>
+    <input id="find-input" type="search" placeholder="Current page only" autocomplete="off" spellcheck="false">
+    <span class="muted" id="find-count" role="status" aria-live="polite"></span>
+  </div>
+</footer>
+
+<div class="scrim" id="scrim"></div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<dialog id="info" aria-labelledby="info-title">
+  <form method="dialog" class="info-form">
+    <h2 id="info-title">About this document</h2>
+    <dl id="info-list"></dl>
+    <p class="info-actions">
+      <a class="btn btn-primary" id="info-download" href="#" rel="noopener">Download Original PDF</a>
+      <button class="btn" value="close">Close</button>
+    </p>
+  </form>
+</dialog>
+
+<noscript><p style="padding:16px">This archive needs JavaScript to display the document. You can still download the original PDF using the link in the About section.</p></noscript>
+</body>
+</html>
